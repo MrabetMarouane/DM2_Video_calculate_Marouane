@@ -1,7 +1,30 @@
 from PySide6 import QtWidgets
-from PySide6 import QtGui
+
+
+
+
+import socket
+s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+s.connect(('8.8.8.8', 1))
+local_ip_address = s.getsockname()[0]
+
+
+
+import urllib.request
+
+external_ip = urllib.request.urlopen('https://ident.me').read().decode('utf8')
+print(external_ip)
+
+import uuid
+mac_address = uuid.getnode()
+mac_address_hex = ':'.join(['{:02x}'.format((mac_address >> elements) & 0xff) for elements in range(0,8*6,8)][::-1])
+
 import platform
-print(platform.node())
+os = platform.system()
+
+
+
+
 
 # Définition de la classe MaFenetre qui hérite de QDialog
 class MaFenetre(QtWidgets.QDialog):
@@ -12,6 +35,10 @@ class MaFenetre(QtWidgets.QDialog):
         self.create_layouts() # Crée les mises en page
         self.create_widgets() # Crée les widgets
         self.addWigets_to_layouts() # Ajoute les widgets aux mises en page
+
+
+
+
 
 
     def create_layouts(self):
@@ -77,6 +104,20 @@ class MaFenetre(QtWidgets.QDialog):
         self.setLayout(self.layoutV)
 
         self.LEdit_hostname.setText(platform.node())
+        print(platform.node())
+
+        self.LEdit_LAN.setText(local_ip_address)
+        print(f"IP Address: {local_ip_address}")
+
+        self.LEdit_MAC.setText(mac_address_hex)
+        print(f"The MAC adress is :{mac_address_hex}")
+
+        self.LEdit_WAN.setText(external_ip)
+
+        self.LEdit_System.setText(os)
+        print("Votre OS est : ", os)
+
+
 
 
 app = QtWidgets.QApplication([])
